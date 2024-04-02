@@ -1,4 +1,4 @@
-import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
@@ -23,26 +23,13 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
-import { ForgotPassword } from "./pages/forgotPassword";
-import { Login } from "./pages/login";
-import { Register } from "./pages/register";
+import { Home, ForgotPassword, Login, Register } from "./pages";
+import Layout from "./components/layout";
+import { resources } from "./config/resources";
 
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <AntdApp>
           <DevtoolsProvider>
@@ -52,28 +39,7 @@ function App() {
               notificationProvider={useNotificationProvider}
               routerProvider={routerBindings}
               authProvider={authProvider}
-              resources={[
-                {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
-                  show: "/blog-posts/show/:id",
-                  meta: {
-                    canDelete: true,
-                  },
-                },
-                {
-                  name: "categories",
-                  list: "/categories",
-                  create: "/categories/create",
-                  edit: "/categories/edit/:id",
-                  show: "/categories/show/:id",
-                  meta: {
-                    canDelete: true,
-                  },
-                },
-              ]}
+              resources={resources}
               options={{
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
@@ -82,7 +48,7 @@ function App() {
                 liveMode: "auto",
               }}
             >
-              <Routes>
+              {/* <Routes>
                 <Route
                   element={
                     <Authenticated
@@ -132,6 +98,23 @@ function App() {
                     path="/forgot-password"
                     element={<ForgotPassword />}
                   />
+                </Route>
+              </Routes> */}
+              <Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                  element={
+                    <Authenticated
+                      key="authenticated-layout"
+                      fallback={<CatchAllNavigate to="/login" />}>
+                      <Layout>
+                        <Outlet />
+                      </Layout>
+                    </Authenticated>}
+                >
+                  <Route index element={<Home />} />
                 </Route>
               </Routes>
 
